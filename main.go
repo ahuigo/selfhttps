@@ -37,8 +37,8 @@ func main() {
 		// },
 	}
 	app := &cli.App{
-		Name:        "selfhttps",
-		Description: "start a https proxy server with self-signed certificate",
+        Name:        "selfhttps",
+        Description: fmt.Sprintf("start a https proxy server with self-signed certificate(version:%s)",BuildDate),
 		UsageText:   "selfhttps [-p PORT] -d DOMAIN1::PROXY_PASS1 [-d DOMAIN2::PROXY_PASS2] ...",
 		Usage: `selfhttps -p 4430 -d local1.com::http://upstream1:4500 -d local2.com::http://upstream2:4501
 
