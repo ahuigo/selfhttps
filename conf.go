@@ -28,13 +28,13 @@ var conf *Config
 
 func initConf(conf *Config, domainProxys []string) {
 	if len(domainProxys) == 0 {
-		fmt.Println("Usage: selfhttps -d local.com::http://localhost:5000")
+		fmt.Println("Usage: selfhttps -d local.com=http://localhost:5000")
 		os.Exit(0)
 	}
 	for _, domainProxy := range domainProxys {
-		domainProxyArr := strings.Split(strings.TrimSpace(domainProxy), "::")
+		domainProxyArr := strings.Split(strings.TrimSpace(domainProxy), "=")
 		if len(domainProxyArr) != 2 {
-			log.Fatalf("Invalid domain::proxy_pass(%s)\n", domainProxy)
+			log.Fatalf("Invalid domain=proxy_pass(%s)\n", domainProxy)
 		} else {
 			domain, proxyPass := domainProxyArr[0], domainProxyArr[1]
 			domain = strings.ToLower(domain)
@@ -44,7 +44,7 @@ func initConf(conf *Config, domainProxys []string) {
 			}
 			u, err := url.Parse(proxyPass)
 			if err != nil || u.Scheme == "" || domain == "" {
-				fmt.Println("Usage: selfhttps -d local.com::http://10.120.45.10:5000")
+				fmt.Println("Usage: selfhttps -d local.com=http://10.120.45.10:5000")
 				os.Exit(1)
 			}
 			conf.DomainProxys = append(conf.DomainProxys, DomainProxy{

@@ -18,7 +18,7 @@ func main() {
 	flags := []cli.Flag{
 		&cli.StringSliceFlag{
 			Name:     "d",
-			Usage:    "domain and proxy_pass `DOMAIN::proxy_pass`",
+			Usage:    "domain and proxy_pass `domain=proxy_pass`",
 			Required: true,
 			// Destination: &conf.Domain,
 		},
@@ -39,12 +39,12 @@ func main() {
 	app := &cli.App{
         Name:        "selfhttps",
         Description: fmt.Sprintf("start a https proxy server with self-signed certificate(version:%s)",BuildDate),
-		UsageText:   "selfhttps [-p PORT] -d DOMAIN1::PROXY_PASS1 [-d DOMAIN2::PROXY_PASS2] ...",
-		Usage: `selfhttps -p 4430 -d local1.com::http://upstream1:4500 -d local2.com::http://upstream2:4501
+		UsageText:   "selfhttps [-p PORT] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...",
+		Usage: `selfhttps -d local1.com=http://upstream1:4500 -d local2.com=http://upstream2:4501
 
 echo "127.0.0.1 local1.com local2.com upstream1 upstream2" | sudo tee -a /etc/hosts
-curl -v -k https://local1.com:4430/api/v1/xxx
-curl -v -k https://local2.com:4430/api/v1/xxx
+curl -v -k https://local1.com/api/v1/xxx
+curl -v -k https://local2.com/api/v1/xxx
 
         +----------------+
         | curl/Chrome/...|
@@ -53,7 +53,7 @@ curl -v -k https://local2.com:4430/api/v1/xxx
                v 
 		   +-------+------+
 		   | https proxy  | default port: 443
-		   | (port:4430)  |  
+		   | (port:443)  |  
 		   ++-----+-------+  
           |         | (like nginx's proxy_pass)
           v         v
