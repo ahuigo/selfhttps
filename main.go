@@ -43,24 +43,23 @@ func main() {
 		Usage: `selfhttps -d local1.com=http://upstream1:4500 -d local2.com=http://upstream2:4501
 
 echo "127.0.0.1 local1.com local2.com upstream1 upstream2" | sudo tee -a /etc/hosts
-curl -v -k https://local1.com/api/v1/xxx
-curl -v -k https://local2.com/api/v1/xxx
 
-        +----------------+
-        | curl/Chrome/...|
-        +------+---------+
-               |
-               v 
-		   +-------+------+
-		   | https proxy  | default port: 443
-		   | (port:443)  |  
-		   ++-----+-------+  
-          |         | (like nginx's proxy_pass)
-          v         v
-+-------+---+        +-----------+  
-| upstream1 |        | upstream2 |  
-|(port:4500)|        |(port:4501)|  
-+-----------+        +-----------+  
+			+---------------------------+
+			|curl -k https://local1.com |
+			|curl -k https://local2.com |
+			+------+--------------------+
+							|
+							v 
+				+-------+------+
+				| https proxy  | default port: 443
+				| (port:443)   |  
+				++-----+-------+  
+				|            	| (like nginx's proxy_pass)
+				v            	v
+		+-------+---+      +-----------+  
+		| upstream1 |      | upstream2 |  
+		|(port:4500)|      |(port:4501)|  
+		+-----------+      +-----------+  
 		`,
 		Before: altsrc.InitInputSourceWithContext(flags, altsrc.NewYamlSourceFromFlagFunc("load")),
 		Flags:  flags,
