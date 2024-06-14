@@ -3,7 +3,6 @@ Start a https proxy server with self-signed certificate.
 
 - [x] Websocket over https proxy
 - [x] Auto generated certificate
-- [ ] Suport Yaml
 
 Required:
 - go >= 1.22
@@ -11,10 +10,15 @@ Required:
     - Mac OSX: brew install openssl
     - Debian/Ubuntu: sudo apt install openssl
 
+## install
+
+    go install github.com/ahuigo/selfhttps@latest
+
 ## USAGE
 Usage:
-
-    selfhttps [-p PORT] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...
+    
+    $ selfhttps -h
+    selfhttps [-p PORT] [--silent] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...
 
 Example:
 
@@ -24,9 +28,10 @@ Example:
     curl -v -k https://local1.com/api/v1/xxx
     curl -v -k https://local2.com/api/v1/xxx
 
-                       +----------------+
-                       | curl/Chrome/...|
-                       +------+---------+
+                    +---------------------------+
+                    |curl -k https://local1.com |
+                    |curl -k https://local2.com |
+                    +------+--------------------+
                               |
                               v 
                       +-------+------+
