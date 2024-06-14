@@ -28,18 +28,18 @@ func main() {
 			Usage:       "server `PORT`",
 			Destination: &conf.Port,
 		},
-		// &cli.StringFlag{
-		// 	Name: "s",
-		// 	// Aliases:     []string{"s"},
-		// 	Value:       "http://localhost:4500",
-		// 	Usage:       "Nginx's `proxy_pass`",
-		// 	Destination: &conf.ProxyPass,
-		// },
+		&cli.BoolFlag{
+			Name: "silent",
+			Aliases:     []string{"s"},
+			Value:       false,
+			Usage:       "Silent mode, no prompt",
+			Destination: &conf.Silent,
+		},
 	}
 	app := &cli.App{
         Name:        "selfhttps",
         Description: fmt.Sprintf("start a https proxy server with self-signed certificate(version:%s)",BuildDate),
-		UsageText:   "selfhttps [-p PORT] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...",
+		UsageText:   "selfhttps [-p PORT] [-s] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...",
 		Usage: `selfhttps -d local1.com=http://upstream1:4500 -d local2.com=http://upstream2:4501
 
 echo "127.0.0.1 local1.com local2.com upstream1 upstream2" | sudo tee -a /etc/hosts
@@ -75,7 +75,8 @@ curl -v -k https://local2.com/api/v1/xxx
 				return dp.Domain
 			})
 
-			fmt.Printf("Config hosts:\n\techo '127.0.0.1 %s' | sudo tee -a /etc/hosts\n", strings.Join(domains, " "))
+			cmd:=fmt.Sprintf("echo '127.0.0.1 %s' | sudo tee -a /etc/hosts", strings.Join(domains, " "))
+			runCmdWithConfirm("Config /etc/hosts", cmd, conf.Silent)
 			fmt.Printf("Press Ctrl+C to shutdown\n")
 			signal.Notify(quit, syscall.SIGTERM, syscall.SIGINT, syscall.SIGQUIT)
 			sig := <-quit

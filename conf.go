@@ -16,7 +16,7 @@ type DomainProxy struct {
 
 type Config struct {
 	Port string
-
+	Silent bool
 	DomainProxys []DomainProxy
 	// Domain      string
 	// ProxyPass   string
@@ -84,13 +84,23 @@ func initCert(conf *Config) {
 			log.Fatalf("cert(%s) or key(%s) file exists, but stat failed, err1(%v), err2(%v)\n", confCertPath, confCertKeyPath, err1, err2)
 			return
 		}
-		fmt.Printf("Add trusted certificate to system: \n\033[32m  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/%s.crt \033[0m\n\n", domain)
-		fmt.Printf("Remove trusted certificate from system: \n\033[32m  sudo security delete-certificate -t -c %s \033[0m\n\n", domain)
-		fmt.Printf("Test: \033[94m curl -v -k https://%s:%s \033[0m ", domain, conf.Port)
+		cmd := fmt.Sprintf("sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/%s.crt", domain)
+		runCmdWithConfirm("Add trusted certificate to system", cmd, conf.Silent)
+		// fmt.Printf("Add trusted certificate to system: \033[32m %s \033[0m\n", cmd)
+		// if StringPrompt("(Yes/No)?:") == "y"{
+		// 	out, err := RunCommand("sh", "-c", cmd)
+		// 	if err != nil {
+		// 		fmt.Printf("failed to execute cmd(%s), err: %v, stdout: %s\n\n", cmd, err, out)
+		// 		os.Exit(0)
+		// 	}
+		// }
+
+		fmt.Printf("The way to remove trusted certificate from system: \n\033[32m  sudo security delete-certificate -t -c %s \033[0m\n\n", domain)
+		fmt.Printf("Have a try: \033[94m curl -v -k https://%s:%s \033[0m ", domain, conf.Port)
 		fmt.Printf("(proxy_pass: \033[94m%s\033[0m)\n\n", proxyPass)
 	}
-
 }
+
 func GetConfig() *Config {
 	if conf == nil {
 		conf = &Config{}
