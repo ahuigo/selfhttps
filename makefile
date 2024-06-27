@@ -1,3 +1,6 @@
+LDFLAGS += -s -w -X "main.BuildDate=$(shell date -u "+%Y-%m-%dT%H:%M:%S")"
+LDFLAGS += -s -w -X "main.BuildVersion=$(shell cat version)"
+
 msg?=
 .ONESHELL:
 gitcheck:
@@ -13,6 +16,13 @@ pkg: gitcheck test
 test:
 	go test -failfast -v .
 
-install:
-	go install -ldflags="-s -w -X main.BuildDate=$$(date -Iseconds)"  .
+init:
+	go mod tidy
+
+.PHONY: build
+build: 
+	go build -ldflags '$(LDFLAGS)'
+
+install: init
+	go install -ldflags='$(LDFLAGS)' .
 

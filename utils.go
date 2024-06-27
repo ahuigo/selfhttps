@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -36,7 +37,7 @@ func runCmdWithConfirm(prompt string, cmd string, silent bool) {
 			out, err := RunCommand("sh", "-c", cmd)
 			if err != nil {
 				fmt.Printf("failed to execute cmd(%s), err: %v, stdout: %s\n\n", cmd, err, out)
-				os.Exit(0)
+				// os.Exit(0)
 			} else {
 				fmt.Printf("execution succeed!\n")
 			}
@@ -71,4 +72,8 @@ func StringPrompt(label string) string {
 		}
 	}
 	return strings.TrimSpace(s)
+}
+
+func isMacOsx() bool{
+    return runtime.GOOS == "darwin"
 }

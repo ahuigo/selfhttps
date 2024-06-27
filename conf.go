@@ -70,6 +70,7 @@ func initCert(conf *Config) {
 		confCertPath, confCertKeyPath := getCertPath(domain)
 		_, err1 := os.Stat(confCertPath)
 		_, err2 := os.Stat(confCertKeyPath)
+		// 0. generate certificate
 		if os.IsNotExist(err1) || os.IsNotExist(err2) {
 			cmd := fmt.Sprintf(`openssl req -x509 -nodes -newkey rsa:2048 -days 365 -keyout %s -out %s -subj "/C=CN/ST=GD/L=SZ/O=SelfHttps, Inc./CN=%s" -addext "subjectAltName = DNS:%s"`, confCertKeyPath, confCertPath, domain, domain)
 			fmt.Printf("Generate certificate: %s \n", cmd)
@@ -84,18 +85,19 @@ func initCert(conf *Config) {
 			log.Fatalf("cert(%s) or key(%s) file exists, but stat failed, err1(%v), err2(%v)\n", confCertPath, confCertKeyPath, err1, err2)
 			return
 		}
+		// 1. add trusted certificate to system
 		cmd := fmt.Sprintf("sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/%s.crt", domain)
+		if !isMacOsx(){
+			cmd = fmt.Sprintf("sudo cp ~/.selfhttps/%s.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates", domain)
+		}
 		runCmdWithConfirm("Add trusted certificate to system", cmd, conf.Silent)
-		// fmt.Printf("Add trusted certificate to system: \033[32m %s \033[0m\n", cmd)
-		// if StringPrompt("(Yes/No)?:") == "y"{
-		// 	out, err := RunCommand("sh", "-c", cmd)
-		// 	if err != nil {
-		// 		fmt.Printf("failed to execute cmd(%s), err: %v, stdout: %s\n\n", cmd, err, out)
-		// 		os.Exit(0)
-		// 	}
-		// }
 
-		fmt.Printf("The way to remove trusted certificate from system: \n\033[32m  sudo security delete-certificate -t -c %s \033[0m\n\n", domain)
+		// 2. remove trusted certificate from system
+		cmd=fmt.Sprintf("sudo security delete-certificate -t -c %s ", domain)
+		if !isMacOsx(){
+			cmd = fmt.Sprintf("sudo rm /usr/local/share/ca-certificates/%s.crt && sudo update-ca-certificates", domain)
+		}
+		fmt.Printf("The way to remove trusted certificate from system: \n\033[32m  %s\033[0m\n\n", cmd)
 		fmt.Printf("Have a try: \033[94m curl -v -k https://%s:%s \033[0m ", domain, conf.Port)
 		fmt.Printf("(proxy_pass: \033[94m%s\033[0m)\n\n", proxyPass)
 	}
