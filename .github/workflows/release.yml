@@ -6,6 +6,9 @@ on:
   pull_request:
     branches: [main]
 
+#permissions: write-all
+permissions: 
+  contents: write
 jobs:
   release:
     name: Release
@@ -15,18 +18,18 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
       - name: Setup Go
-        uses: actions/setup-go@v4
+        uses: actions/setup-go@v5
         with:
           go-version: ^1.22
-
       - name: Set GOVERSION
         run: echo "GOVERSION=$(go version | sed -r 's/go version go(.*)\ .*/\1/')" >> $GITHUB_ENV
       - name: Set AppVersion
         run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
       - name: Show version
         run: echo ${{ env.GOVERSION }} ${{ env.VERSION }}
+
       - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v5
+        uses: goreleaser/goreleaser-action@v6
         with:
           distribution: goreleaser
           version: latest
