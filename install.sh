@@ -51,7 +51,8 @@ function install() {
     echo "Downloading $url"
 
     mkdir -p $tmpdir
-    wget -O $tmpdir/a.tar.gz $url && tar -zxvf $tmpdir/a.tar.gz -C $tmpdir && mv "$tmpdir/$package" /usr/local/bin/ && rm -rf $tmpdir
+    { wget -O $tmpdir/a.tar.gz $url || curl -L -C - -o $tmpdir/a.tar.gz $url; } && tar -zxvf $tmpdir/a.tar.gz -C $tmpdir 
+    { mv "$tmpdir/$package" /usr/local/bin/ || sudo mv "$tmpdir/$package" /usr/local/bin/; } && rm -rf $tmpdir
     echo "Install /usr/local/bin/$package success!"
 }
 

@@ -39,7 +39,7 @@ func main() {
 	app := &cli.App{
         Name:        "selfhttps",
         Description: fmt.Sprintf("start a https proxy server with self-signed certificate(version:%s,go:%s)",BuildVersion, GoVersion),
-		UsageText:   "selfhttps [-p PORT] [-s] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...",
+		UsageText:   "selfhttps [-p 443] [-s] -d domain1=proxy_pass1 [-d domain2=proxy_pass2] ...",
 		Usage: `selfhttps -d local1.com=http://upstream1:4500 -d local2.com=http://upstream2:4501
 
 echo "127.0.0.1 local1.com local2.com upstream1 upstream2" | sudo tee -a /etc/hosts

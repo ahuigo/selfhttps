@@ -3,17 +3,11 @@ Start a https proxy server with self-signed certificate.
 
 - [x] Websocket over https proxy
 - [x] Auto generated certificate
-- [x] Support macOSX and linux
-
-Required:
-- go >= 1.22
-- openssl >= 1.1.1 or LibreSSL >= 3.1.0
-    - Mac OSX: brew install openssl
-    - Debian/Ubuntu: sudo apt install openssl
+- [x] Support MacOSX, linux, windows(partial)
 
 ## install
 
-    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ahuigo/selfhttps/main/install.sh)"
+    bash -c "$(curl -fsSL https://raw.githubusercontent.com/ahuigo/selfhttps/main/install.sh)"
 
 ## USAGE
 Usage:
@@ -46,12 +40,27 @@ Example:
                |(port:4500)|        |(port:4501)|  
                +-----------+        +-----------+  
                    
-## Add trusted certificate(optional)
+## Add trusted certificate to OS(to ignore cert warnning)
+> If you don't wanna see certificate warnning, you could put certificate into your OS system.
+
 Add trusted certificate to system: 
 
+    # mac
     sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/local1.com.crt 
+
+    # linux(ubuntu/debian)
+    sudo cp ~/.selfhttps/local1.com.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates
+
+    # windows
+    certutil -addstore -f "ROOT" /path/to/.selfhttps/local1.com.crt
 
 Remove trusted certificate from system: 
 
+    # mac
     sudo security delete-certificate -t -c local1.com 
 
+    # linux
+    sudo rm /usr/local/share/ca-certificates/local1.com.crt && sudo update-ca-certificates
+
+    # windows
+    certutil -delstore "ROOT" /path/to/.selfhttps/local1.com.crt
