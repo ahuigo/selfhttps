@@ -77,3 +77,6 @@ func StringPrompt(label string) string {
 func isMacOsx() bool{
     return runtime.GOOS == "darwin"
 }
+func isWindowsOs() bool{
+    return runtime.GOOS == "windows"
+}

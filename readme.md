@@ -3,6 +3,7 @@ Start a https proxy server with self-signed certificate.
 
 - [x] Websocket over https proxy
 - [x] Auto generated certificate
+- [x] Support macOSX and linux
 
 Required:
 - go >= 1.22
@@ -12,7 +13,7 @@ Required:
 
 ## install
 
-    go install github.com/ahuigo/selfhttps@latest
+    sh -c "$(curl -fsSL https://raw.githubusercontent.com/ahuigo/selfhttps/main/install.sh)"
 
 ## USAGE
 Usage:

@@ -86,16 +86,20 @@ func initCert(conf *Config) {
 			return
 		}
 		// 1. add trusted certificate to system
-		cmd := fmt.Sprintf("sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/%s.crt", domain)
-		if !isMacOsx(){
-			cmd = fmt.Sprintf("sudo cp ~/.selfhttps/%s.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates", domain)
+		cmd := fmt.Sprintf("sudo cp ~/.selfhttps/%s.crt /usr/local/share/ca-certificates/ && sudo update-ca-certificates", domain)
+		if isMacOsx(){
+			cmd = fmt.Sprintf("sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain ~/.selfhttps/%s.crt", domain)
+		}else if isWindowsOs(){
+			cmd = fmt.Sprintf("certutil -addstore -f \"ROOT\" ~/.selfhttps/%s.crt", domain)
 		}
 		runCmdWithConfirm("Add trusted certificate to system", cmd, conf.Silent)
 
 		// 2. remove trusted certificate from system
-		cmd=fmt.Sprintf("sudo security delete-certificate -t -c %s ", domain)
-		if !isMacOsx(){
-			cmd = fmt.Sprintf("sudo rm /usr/local/share/ca-certificates/%s.crt && sudo update-ca-certificates", domain)
+		cmd = fmt.Sprintf("sudo rm /usr/local/share/ca-certificates/%s.crt && sudo update-ca-certificates", domain)
+		if isMacOsx(){
+			cmd=fmt.Sprintf("sudo security delete-certificate -t -c %s ", domain)
+		}else if isWindowsOs(){
+			cmd = fmt.Sprintf("certutil -delstore \"ROOT\" ~/.selfhttps/%s.crt", domain)
 		}
 		fmt.Printf("The way to remove trusted certificate from system: \n\033[32m  %s\033[0m\n\n", cmd)
 		fmt.Printf("Have a try: \033[94m curl -v -k https://%s:%s \033[0m ", domain, conf.Port)
