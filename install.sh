@@ -47,6 +47,9 @@ function install() {
         echo "Not support arch: $arch"
         return 1
     fi
+    if [ "$os" == "darwin" ] ; then
+        { brew list | grep '^openssl@' >/dev/null; } || brew install openssl
+    fi
     url="https://github.com/ahuigo/selfhttps/releases/download/v${version}/selfhttps_${version}_${os}_${arch}.tar.gz"
     echo "Downloading $url"
 
